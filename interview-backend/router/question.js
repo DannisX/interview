@@ -15,7 +15,7 @@ router.post('/questions', questionValidator.addQuestion, questionCtrl.addQuestio
 router.get('/questions', questionCtrl.getQuestions)
 
 //  获取所有题目
-router.get('/questionsAll', questionCtrl.getQuestionsAll)
+router.get('/questions/all', questionCtrl.getQuestionsAll)
 
 // 获取当前题目
 router.get('/question/:questionId', questionValidator.getCurrentQuestion, questionCtrl.getCurrentQuestion)
