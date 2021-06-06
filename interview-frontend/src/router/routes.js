@@ -103,7 +103,6 @@ export const routes = [
         path: '/record',
         name: 'record',
         component: Record,
-        redirect: 'record/records',
         children: [
             {
                 path: '/record/records',

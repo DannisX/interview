@@ -29,7 +29,6 @@ export default {
       .then((res) => {
         this.$store.dispatch("setCurrentUser", res.data.user);
         this.$store.dispatch("setCurrentLogStatus", true);
-        // this.$router.push({ name: "home" });
       })
       .catch((err) => err);
   },

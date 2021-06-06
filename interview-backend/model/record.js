@@ -13,7 +13,7 @@ const recordSchema = new mongoose.Schema({
         require: true
     },
     answers: {
-        type: Array,
+        type: String,
         require: true
     }
 })

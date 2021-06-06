@@ -11,14 +11,17 @@ import user from './user'
 // 系统设置
 import setting from './setting'
 // 题目
-import questions from './questions'
+import question from './question'
+// 提交记录
+import record from './record'
 
 const store = new Vuex.Store({
     modules: {
         isLogin,
         user,
         setting,
-        questions
+        question,
+        record
     }
 })
 

@@ -24,38 +24,48 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
-            <el-card>
-              <h3 slot="header">{{ currentQuestion.title }}</h3>
+          <!-- 当前题目与答题 -->
+          <el-card>
+            <h3 slot="header">{{ currentQuestion.title }}</h3>
+            <!-- 已经提交了且不是背题模式 -->
+            <div v-if="!recite && !committed">
               <div>
-                <h4 v-if="currentQuestion.code">代码：</h4>
+                <h4 v-if="currentQuestion.code" class="full-line">代码：</h4>
                 <p v-html="currentQuestion.code"></p>
               </div>
               <div>
-                <h4>回答：</h4>
+                <h4 class="full-line">回答（多条答案请插入列表作答）：</h4>
                 <tiny-edit
-                  :value="answer"
-                  @input="(res) => (answer = res)"
+                  :value="record.answers"
+                  @input="(res) => (record.answers = res)"
                 ></tiny-edit>
               </div>
-              <el-button type="primary">提交</el-button>
-            </el-card>
-          </el-col>
+
+              <el-button type="primary" class="full-line" @click="commitAnswer"
+                >提交</el-button
+              >
+            </div>
+            <!-- 已经提交了或者是背题模式 -->
+            <div v-if="recite || committed">
+              <div v-for="(item, i) in currentRecords" class="answer">
+                <h4 class="answer-title">我的第{{ i + 1 }}次提交：</h4>
+                <p v-html="item.answers" class="content"></p>
+                <p class="time">{{ item.createdAt | timeFormat }}</p>
+              </div>
+            </div>
+          </el-card>
         </el-row>
       </el-col>
       <el-col :span="7" :offset="1">
-        <el-card>
+        <el-card v-if="recite || committed">
           <h4 slot="header">{{ currentQuestion.title }}</h4>
           <div>
-            <h4 v-if="currentQuestion.code">代码：</h4>
+            <h4 v-if="currentQuestion.code" class="full-line">代码：</h4>
             <div v-html="currentQuestion.code" disabled></div>
           </div>
           <div>
-            <h4>答案：</h4>
-            <div
-              v-for="item in currentQuestion.answers"
-              v-html="item.answer"
-            ></div>
+            <h4 class="full-line">答案：</h4>
+            <div v-html="currentQuestion.answers"></div>
           </div>
         </el-card>
       </el-col>
@@ -66,22 +76,24 @@
 <script>
 import { mapGetters } from "vuex";
 import TinyEdit from "../../TinyEdit/TinyEdit";
+import moment from "moment";
 export default {
   name: "Answer",
   components: {
     TinyEdit,
   },
   created() {
+    // 获取所有题目
     this.$store.dispatch("setCurrentQuestions");
   },
   data() {
     return {
-      code: `<p>这是很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的答案</p>
-        <pre class="language-javascript"><code>function fn(){\n    let a=10;\n    return ()=&gt;a\n}</code></pre>`,
-      answer: "",
+      record: {},
+      committed: false,
     };
   },
   methods: {
+    // 上一题
     prevQs() {
       if (this.currentQsIndex >= 1) {
         // 更改当前Index
@@ -93,6 +105,7 @@ export default {
         });
       }
     },
+    // 下一题
     nextQs() {
       if (this.currentQsIndex < this.total - 1) {
         // 更改当前Index
@@ -104,10 +117,35 @@ export default {
         });
       }
     },
+    // 提交答案
+    async commitAnswer() {
+      try {
+        const result = await this.$axios.post(
+          `/record/${this.$router.currentRoute.query._id}`,
+          {
+            record: this.record,
+          }
+        );
+        // 获取所有提交记录
+        await this.$store.dispatch("setCurrentRecords");
+        // 更改提交状态
+        this.committed = true;
+      } catch (error) {
+        return error;
+      }
+    },
+  },
+  filters: {
+    timeFormat(inp, format = "YYYY年MM月DD日 HH:mm:ss") {
+      return moment(inp).format(format);
+    },
   },
   computed: {
+    // 映射vuex数据
     ...mapGetters([
+      "recite",
       "questions",
+      "records",
       "total",
       "currentQsIndex",
       "currentQuestion",
@@ -119,6 +157,7 @@ export default {
       "queryOrder",
       "queryTitle",
     ]),
+    // 当前条件查询数据
     currentQuestions() {
       const filterQuestions = this.questions.filter((item) => {
         return (
@@ -139,19 +178,58 @@ export default {
       }
       return sortedQuestions;
     },
+    //
+    currentRecords() {
+      return this.records.filter(
+        (item) => item.questionId == this.$route.query._id
+      );
+    },
   },
   watch: {
     $route: {
       handler(newVal) {
         // 找出当前题目的index
-        const curIndex = this.currentQuestions.findIndex(
-          (item) => item._id == newVal.query._id
-        );
-        this.$store.commit("setCurrentIndex", curIndex);
-        this.$store.commit(
-          "setCurrentQuestion",
-          this.currentQuestions[this.currentQsIndex]
-        );
+        try {
+          const curIndex = this.currentQuestions.findIndex(
+            (item) => item._id == newVal.query._id
+          );
+          if (curIndex < 0) {
+            throw new Error(
+              "刚刷新的时候vuex中的数据还没获取到，没有题目数据，算不了"
+            );
+          }
+          // 设置当前index
+          this.$store.commit("setCurrentIndex", curIndex);
+          // 设置当前题目
+          this.$store.commit(
+            "setCurrentQuestion",
+            this.currentQuestions[this.currentQsIndex]
+          );
+
+          // 设置当前提交状态
+          this.committed = false;
+          this.record.answers = "";
+        } catch (error) {
+          return error;
+        }
+      },
+      deep: true,
+      immediate: true,
+    },
+    currentQuestions: {
+      handler(newVal) {
+        try {
+          const curIndex = newVal.findIndex(
+            (item) => item._id == this.$router.currentRoute.query._id
+          );
+          if (curIndex < 0) {
+            throw new Error("没到时候");
+          }
+          this.$store.commit("setCurrentIndex", curIndex);
+          this.$store.commit("setCurrentQuestion", newVal[this.currentQsIndex]);
+        } catch (error) {
+          return error;
+        }
       },
       deep: true,
       immediate: true,
@@ -160,5 +238,21 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+.full-line {
+  width: 100%;
+  margin: 10px auto;
+}
+
+.answer {
+  border-bottom: 1px solid #eee;
+  &* {
+    margin: 10px 0;
+  }
+  .time {
+    font-size: 12px;
+    color: #bbb;
+    text-align: right;
+  }
+}
 </style>

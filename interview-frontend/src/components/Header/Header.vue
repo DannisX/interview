@@ -23,7 +23,7 @@
         <router-link :to="{ name: 'qsShow' }">题库</router-link>
       </el-menu-item>
       <el-menu-item index="5">
-        <router-link :to="{ name: 'records' }">提交记录</router-link>
+        <router-link :to="{ name: 'record' }">提交记录</router-link>
       </el-menu-item>
       <el-menu-item index="6">
         <router-link :to="{ name: 'about' }">关于我们</router-link>

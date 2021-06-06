@@ -6,8 +6,8 @@ mongoose.set('useFindAndModify', false);
 exports.pushRecord = async (req, res, next) => {
     try {
         const userId = req.user._id;
-        const questionId = req.question._id;
-        const answers = req.answers;
+        const { questionId } = req.params;
+        const { answers } = req.body.record;
         const record = new Record({ answers, userId, questionId })
         await record.save();
 

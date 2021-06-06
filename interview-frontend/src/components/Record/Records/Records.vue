@@ -2,21 +2,45 @@
   <div class="records">
     <el-col :span="16" :offset="1">
       <el-card>
-        <div slot="header">div和span的区别</div>
-        <div v-html="code"></div>
+        <div slot="header">{{ currentQuestion.title }}</div>
+        <div>
+          <h4>代码：</h4>
+          <div v-html="currentQuestion.code"></div>
+        </div>
+        <div v-for="(item, i) in currentRecords" class="answer">
+          <h4 class="answer-title">我的第{{ i + 1 }}次提交：</h4>
+          <p v-html="item.answers" class="content"></p>
+          <p class="time">{{ item.createdAt | timeFormat }}</p>
+        </div>
       </el-card>
     </el-col>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
+import moment from "moment";
 export default {
   name: "Records",
   data() {
-    return {
-      code: `<p>这是很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的答案</p>
-        <pre class="language-javascript"><code>function fn(){\n    let a=10;\n    return ()=&gt;a\n}</code></pre>`,
-    };
+    return {};
+  },
+  filters: {
+    timeFormat(inp, format = "YYYY年MM月DD日 HH:mm:ss") {
+      return moment(inp).format(format);
+    },
+  },
+  computed: {
+    ...mapGetters(["questions", "records"]),
+    currentQuestion() {
+      return this.questions.find((item) => item._id == this.$route.query._id);
+    },
+    currentRecords() {
+      return this.records.filter(
+        (item) => item.questionId == this.currentQuestion._id
+      );
+    },
   },
 };
 </script>

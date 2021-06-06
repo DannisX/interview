@@ -18,17 +18,8 @@ exports.getCurrentRecord = validate(
 exports.pushRecord = validate(
     [
         // 验证答案数组不能为空
-        body('answers').notEmpty().withMessage('题目答案不能为空')
-            // 验证答案内容不能为空
-            .custom(async (answers, { req }) => {
-                answers.map(item => {
-                    if (item.answer == '') {
-                        return Promise.reject('答案内容不能为空！')
-                    }
-                })
-                console.log(answers);
-                req.answers = answers;
-            }),
+        body('record.answers').notEmpty().withMessage('题目答案不能为空'),
+        // 验证答案内容不能为空
 
         // 验证题目ID
         param('questionId').notEmpty().withMessage('题目ID不能为空！')
@@ -37,7 +28,7 @@ exports.pushRecord = validate(
                 if (!question) {
                     return Promise.reject('题目不存在！')
                 }
-                req.question = question
+
             })
 
     ]
