@@ -33,7 +33,7 @@ const mutations = {
 
 const actions = {
     async setCurrentQuestions({ commit }) {
-        const data = await axios.get(`http://localhost:3000/api/questions/all`);
+        const data = await axios.get(`http://192.168.3.232:3000/api/questions/all`);
         commit('setQuestions', data.data.questions);
         commit('setTotal', data.data.total)
     }

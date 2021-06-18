@@ -7,7 +7,8 @@ import { Message, Notification } from 'element-ui'
 
 
 const _axios = axios.create({
-    baseURL: 'http://localhost:3000/api',
+    // baseURL: 'http://localhost:3000/api',
+    baseURL: 'http://192.168.3.232:3000/api',
     timeout: 5000,
 });
 
@@ -44,6 +45,16 @@ _axios.interceptors.response.use(
     error => {
         // 处理状态码2xx之外的情况
         switch (error.response.status) {
+            case 400:
+                error.response.data.errors.map(item => {
+                    Message({
+                        message: item.msg,
+                        type: "error",
+                        duration: 1000
+                    })
+                })
+
+                break;
             case 401:
                 // 令牌失效，需要刷新
                 if (error.response.data.error.code === 5) {

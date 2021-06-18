@@ -1,7 +1,7 @@
 <template>
   <div class="answer">
     <el-row>
-      <el-col :span="10" :offset="3">
+      <el-col :span="18" :offset="3">
         <el-row>
           <el-col :span="22" :offset="1">
             <el-button
@@ -25,7 +25,7 @@
         </el-row>
         <el-row>
           <!-- 当前题目与答题 -->
-          <el-card>
+          <el-card v-if="!committed && !recite">
             <h3 slot="header">{{ currentQuestion.title }}</h3>
             <!-- 已经提交了且不是背题模式 -->
             <div v-if="!recite && !committed">
@@ -47,7 +47,11 @@
             </div>
             <!-- 已经提交了或者是背题模式 -->
             <div v-if="recite || committed">
-              <div v-for="(item, i) in currentRecords" class="answer">
+              <div
+                v-for="(item, i) in currentRecords"
+                class="answer"
+                :key="item.id"
+              >
                 <h4 class="answer-title">我的第{{ i + 1 }}次提交：</h4>
                 <p v-html="item.answers" class="content"></p>
                 <p class="time">{{ item.createdAt | timeFormat }}</p>
@@ -56,7 +60,9 @@
           </el-card>
         </el-row>
       </el-col>
-      <el-col :span="7" :offset="1">
+    </el-row>
+    <el-row :style="{ margin: '10px 0' }">
+      <el-col :span="18" :offset="3">
         <el-card v-if="recite || committed">
           <h4 slot="header">{{ currentQuestion.title }}</h4>
           <div>
@@ -64,8 +70,13 @@
             <div v-html="currentQuestion.code" disabled></div>
           </div>
           <div>
-            <h4 class="full-line">答案：</h4>
-            <div v-html="currentQuestion.answers"></div>
+            <h4 class="full-line">参考答案：</h4>
+            <tiny-edit
+              :value="currentQuestion.answers"
+              @input="(res) => (currentQuestion.answers = res)"
+              disabled
+            ></tiny-edit>
+            <!-- <div v-html="currentQuestion.answers" class="answer"></div> -->
           </div>
         </el-card>
       </el-col>
@@ -120,7 +131,7 @@ export default {
     // 提交答案
     async commitAnswer() {
       try {
-        const result = await this.$axios.post(
+        await this.$axios.post(
           `/record/${this.$router.currentRoute.query._id}`,
           {
             record: this.record,
@@ -246,6 +257,8 @@ export default {
 
 .answer {
   border-bottom: 1px solid #eee;
+  margin-left: 20px;
+  // overflow: auto;
   &* {
     margin: 10px 0;
   }

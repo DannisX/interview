@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "QuestionSider",
   data() {
@@ -67,9 +68,19 @@ export default {
           id: 10,
           type: "Optimization",
         },
+        {
+          id: 11,
+          type: "Human Resource",
+        },
       ],
-      isAdmin: true,
+      // isAdmin: true,
     };
+  },
+  computed: {
+    ...mapGetters(["user"]),
+    isAdmin() {
+      return this.user.authority == "Admin";
+    },
   },
   methods: {
     typeSelect(type) {
@@ -78,6 +89,7 @@ export default {
         type = "";
       }
       this.$store.commit("setQueryType", type);
+      this.$store.commit("setQueryPage", 1);
     },
     turnToAdd() {
       this.$router.push({ name: "addNew" });

@@ -1,6 +1,6 @@
 <template>
   <div class="register">
-    <el-col :span="6" :offset="15">
+    <el-col :span="7" :offset="15">
       <el-card shadow="hover">
         <h2 slot="header">注册</h2>
         <el-form ref="form" :model="user" :rules="formRules" label-width="80px">

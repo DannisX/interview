@@ -47,6 +47,10 @@
                       label="Optimization"
                       value="optimization"
                     ></el-option>
+                    <el-option
+                      label="Human Resource"
+                      value="human resource"
+                    ></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>

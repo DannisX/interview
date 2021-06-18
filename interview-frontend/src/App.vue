@@ -1,17 +1,20 @@
 <template>
   <div class="app">
     <app-header></app-header>
-    <router-view></router-view>
+    <router-view class="main-view"></router-view>
+    <app-footer></app-footer>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 export default {
   name: "App",
   components: {
     "app-header": Header,
+    "app-footer": Footer,
   },
   computed: {
     ...mapGetters(["isLogin"]),
@@ -49,5 +52,11 @@ export default {
 a {
   display: block;
   text-decoration: none;
+}
+
+.main-view {
+  max-width: 95vw;
+  min-height: 80vh;
+  margin: 10px auto;
 }
 </style>

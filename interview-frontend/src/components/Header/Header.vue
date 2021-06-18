@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <header class="header">
     <el-menu
       default-active="2"
       mode="horizontal"
@@ -42,7 +42,7 @@
         <span>{{ user.email }}</span>
       </el-menu-item>
     </el-menu>
-  </div>
+  </header>
 </template>
 
 <script>

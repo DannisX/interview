@@ -142,7 +142,6 @@ exports.accesstoken = async (req, res, next) => {
 
         // 获得刷新令牌
         const refreshToken = req.headers['x-refresh-token'].split('refreshToken ')[1]
-        console.log(refreshToken);
         // 查询数据库中是否存在该刷新令牌，若存在则返回新的访问令牌，若不存在，则返回错误代码和信息
         // 防盗，被盗后重新登录即可使原来的token失效
         const refreshTokenAlready = await RefreshToken.findOne({ refreshToken })
@@ -156,7 +155,6 @@ exports.accesstoken = async (req, res, next) => {
         }
         // 验证刷新令牌,令牌有效则返回新的访问令牌，令牌无效则返回错误
         const refreshTokenResult = await tokenTool.verifyToken(refreshToken);
-        console.log("refreshTokenResult=======", refreshTokenResult);
 
         // 生成新的token
         const access_token = await tokenTool.generateToken(refreshTokenResult.data, ACCESS_TOKEN_EXPIRESIN);

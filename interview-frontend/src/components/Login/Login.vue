@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <el-col :span="6" :offset="15">
+    <el-col :span="7" :offset="15">
       <el-card>
         <h2 slot="header">
           登录
