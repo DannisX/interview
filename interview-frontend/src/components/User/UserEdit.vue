@@ -13,13 +13,29 @@
           <el-container>
             <el-aside width="180px">
               <div class="block">
-                <el-avatar
+                <!-- <el-avatar
                   shape="square"
                   :size="150"
                   :src="avatarUrl"
                   fit="fill"
                   class="mt10"
-                ></el-avatar>
+                ></el-avatar> -->
+                <el-upload
+                  :action="action"
+                  :show-file-list="false"
+                  :headers="myheaders"
+                  name="avatar"
+                  :on-success="successUpload"
+                  :before-upload="beforeUpload"
+                >
+                  <img
+                    v-if="user.avatar"
+                    :src="user.avatar"
+                    width="150"
+                    height="150"
+                  />
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
               </div>
             </el-aside>
             <el-main>
@@ -122,7 +138,11 @@ export default {
         password: [{ validator: validatePassword, trigger: "blur" }],
         confirmNew: [{ validator: validateConfirmNew, trigger: "blur" }],
       },
-      imageUrl: "",
+      action: "http://192.168.3.232:3000/api/user/avatarupload",
+      myheaders: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      // imageUrl: "",
       avatarUrl:
         "https://static01.imgkr.com/temp/a62289c6d6fe4c6f86e21673aa7ad4f1.jpg",
     };
@@ -167,6 +187,28 @@ export default {
         }
       });
     },
+    successUpload(res, file, fileList) {
+      this.user.avatar = URL.createObjectURL(file.raw);
+      // this.imageUrl = res.data.path;
+    },
+    beforeUpload(file) {
+      let isImg =
+        file.type === "image/jpg" || "image/jpeg" || "image/png" || "image/gif";
+      if (!isImg) {
+        this.$message.error({
+          message: "图片格式不正确",
+          duration: 1500,
+        });
+      }
+      let lt2M = file.size / 1024 / 1024 < 2;
+      if (!lt2M) {
+        this.$message.error({
+          message: "图片大小不能超过2M",
+          duration: 1500,
+        });
+      }
+      return isImg && lt2M;
+    },
   },
   created() {
     this.$axios
@@ -184,7 +226,8 @@ export default {
   margin-top: 20px;
 }
 .block {
-  .el-avatar {
+  .el-avatar,
+  .el-upload img {
     margin-left: 20px;
   }
 }

@@ -15,7 +15,7 @@
                 <el-avatar
                   shape="square"
                   :size="150"
-                  :src="avatarUrl"
+                  :src="user.avatar"
                   fit="fill"
                 ></el-avatar>
               </div>
@@ -48,10 +48,7 @@ import { mapGetters } from "vuex";
 export default {
   name: "UserShow",
   data() {
-    return {
-      avatarUrl:
-        "https://static01.imgkr.com/temp/a62289c6d6fe4c6f86e21673aa7ad4f1.jpg",
-    };
+    return {};
   },
   methods: {
     userEdit() {

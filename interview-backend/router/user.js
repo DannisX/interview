@@ -5,6 +5,8 @@ const userCtrl = require('../controller/user')
 // 引入user验证器（user相关数据验证处理程序）
 const userValidator = require('../validator/user')
 
+const avatarLoader = require('../middleware/avatarUpload')
+
 // 引入token验证中间件（身份验证）
 const auth = require('../middleware/auth')
 const decode = require('../middleware/decode')
@@ -30,6 +32,8 @@ router.put('/user', decode.decodeUser, auth, userValidator.update, userCtrl.upda
 
 // 更新密码
 router.put('/password', auth, decode.decodePassword, userValidator.passwordUpdate, userCtrl.updatePassword)
+
+router.post('/user/avatarupload', auth, avatarLoader, userCtrl.avatarUpload)
 
 router.get('/user/logout', addToBlackList, auth, userCtrl.logout)
 

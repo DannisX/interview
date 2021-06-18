@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false);
 const tokenTool = require('../util/jwt')
 const { ACCESS_TOKEN_EXPIRESIN, REFRESH_TOKEN_EXPIRESIN } = require('../config/config.default')
+const path = require('path')
 /**
  * 注册
  * @param  req 包含user数据的请求
@@ -120,6 +121,20 @@ exports.updatePassword = async (req, res, next) => {
     }
 }
 
+
+exports.avatarUpload = async (req, res, next) => {
+    const { user } = req;
+    const { file } = req;
+    // 更改图片静态资源路径
+    file.path = file.path.replace('C:\\Users\\75808\\Desktop\\interview\\interview-backend\\uploads\\', 'http://192.168.3.232:3000/static/')
+    // 同步更新数据库
+    let update = await User.findOneAndUpdate(
+        { _id: user.id },
+        { avatar: file.path },
+        { new: true }
+    )
+    res.status(200).json({ data: req.file })
+}
 
 exports.logout = async (req, res, next) => {
     try {

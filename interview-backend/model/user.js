@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-
+        default: "https://static01.imgkr.com/temp/4e6244db873a40cebd88047a871a8318.jpg"
     },
 
 })

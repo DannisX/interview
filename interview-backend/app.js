@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(morgan("dev"))
 // 跨域
 app.use(cors())
+app.use('/static', express.static('uploads'))
 // 端口设置
 const PORT = process.env.PORT || 3000
 
