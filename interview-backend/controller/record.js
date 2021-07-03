@@ -36,7 +36,6 @@ exports.getRecords = async (req, res, next) => {
 
 exports.getCurrentRecord = async (req, res, next) => {
     try {
-        console.log(req.params);;
         const { questionId } = req.params;
         const { _id: userId } = req.user;
         const records = await Record.find({ questionId, userId }).sort({ _id: '1' })

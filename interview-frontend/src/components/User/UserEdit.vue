@@ -138,7 +138,8 @@ export default {
         password: [{ validator: validatePassword, trigger: "blur" }],
         confirmNew: [{ validator: validateConfirmNew, trigger: "blur" }],
       },
-      action: "http://192.168.3.232:3000/api/user/avatarupload",
+      action: "http://localhost:3000/api/user/avatarupload",
+      // action: "http://192.168.3.232:3000/api/user/avatarupload",
       myheaders: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -153,10 +154,24 @@ export default {
   methods: {
     submitEdit() {
       // 加密数据
-      const encodeData = this.$encrypt(this.user);
+      const user = {
+        name: this.user.name,
+        email: this.user.email,
+      };
+      const encodeData = this.$encrypt(user);
       this.$axios
         .put("/user", { encodeData })
-        .then((res) => console.log(res.data))
+        .then((res) => {
+          this.$message({
+            message: "修改成功！请重新登录！",
+            type: "success",
+            duration: 1500,
+          });
+          this.$axios
+            .get("/user/logout")
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
+        })
         .catch((err) => err);
     },
     passwordDrawer() {

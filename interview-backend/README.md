@@ -1,88 +1,19 @@
-# API文档
+# Interview系统
 
-## 1.用户相关API（user）
+暂未部署至线上，请下载至本地使用
 
-### 1.注册
-```js
-    {
-        Method:POST,
-        Url:"http://localhost:3000/api/users",
-        Data:{
-            name,
-            email,
-            password,
-            authority,
-        }
-    }
-    // 返回注册完成后的用户数据
-```
+## 使用条件：  
 
-### 2.登录
-```JS
-    {
-        Method:POST,
-        Url:"http://localhost:3000/api/users/login",
-        Data:{
-            name || email,
-            password
-        }
-    }
-    // 返回token令牌
-```
+**须安装mongoDB**   
 
-### 3.获取当前用户信息
-```js
-    {
-        Method:GET,
-        Url:"http://localhost:3000/api/user",
-        headers:Bearer token
-    }
-    // 返回当前用户的数据，不包含密码
-```
+## 使用方式：
+
+1.下载之后前端启动命令行 使用`node app.js`或者`nodemon app.js`命令启动   
+2.在浏览器中URL栏输入`http://localhost:3000/questions/restore`，或者使用接口测试工具，例如`postman`，访问该地址，即可以将题目数据还原至本地数据库中，无需自己创建，会自动创建   
+3.完成上述步骤，后端即启用成功   
 
 
-### 4.修改用户信息
-```js
-    {
-        Method:PUT,
-        Url:"http://localhost:3000/api/user"
-        Data:{
-            [name],
-            [email],
-            [password],
-        }
-    }
-    // 返回修改后的用户信息
-```
+## 备份数据库   
 
-### 5.注销登录
-```js
-    {
-        // 清除
-    }
-    // 
-```
+在浏览器中URL栏输入`http://localhost:3000/questions/backup`，或者使用接口测试工具，例如`postman`，访问该地址，即可将题目数据备份至本地json文件，须存在data文件夹，备份前须不存在questions集合   
 
-### 6.注销用户
-```js
-    {
-        Method:DELETE,
-        Url:"http://localhost:3000/api/user"
-        {
-            // 无需参数
-        }
-    }
-    // 返回被注销的用户的信息   
-```
-
-## 2.题目相关API
-
-### 1.题目查询
-```js
-    {
-        Method:GET
-        
-    }
-```
-
-### 2.当前题查询

@@ -12,7 +12,6 @@ exports.decodeUser = async (req, res, next) => {
         let decrypt = new JSEncrypt()
         decrypt.setPrivateKey(privateKey.toString());
         const result = JSON.parse(decrypt.decrypt(encodeData))
-        console.log(result);
         req.body.user = result
         next()
     } catch (err) {

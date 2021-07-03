@@ -1,5 +1,5 @@
 const { User, RefreshToken } = require('../model')
-
+const md5 = require('md5')
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false);
 const tokenTool = require('../util/jwt')
@@ -15,9 +15,7 @@ const path = require('path')
 exports.register = async (req, res, next) => {
     try {
         // 生成一条新的user数据，并保存至数据库
-
-
-        let user = new User({ ...req.body.user })
+        let user = new User({ ...req.body.user, password: md5(req.body.user.password) })
         await user.save()
         user = user.toJSON();
         delete user.password;
@@ -126,7 +124,9 @@ exports.avatarUpload = async (req, res, next) => {
     const { user } = req;
     const { file } = req;
     // 更改图片静态资源路径
-    file.path = file.path.replace('C:\\Users\\75808\\Desktop\\interview\\interview-backend\\uploads\\', 'http://192.168.3.232:3000/static/')
+    file.path = `http://localhost:3000/static/${file.path.replace('public\\', '')}`
+    // 
+    // file.path = `http://192.168.3.232:3000/static/${file.path.replace('public\\', '')}`
     // 同步更新数据库
     let update = await User.findOneAndUpdate(
         { _id: user.id },

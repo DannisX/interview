@@ -1,19 +1,28 @@
 const multer = require('multer')
 const path = require("path")
-const avatarPath = path.join(__dirname, '../uploads/avatars')
-let storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, avatarPath);
-    },
-    filename(req, file, cb) {
-        let format = (file.originalname).split('.');
-        cb(null, `${file.fieldname}-${Date.now()}.${format[format.length - 1]}`)
-    }
-})
+const moment = require('moment')
+const fs = require('fs/promises')
+const generateStorage = async () => {
+    const today = moment().format('YYYYMMDD')
+    const todayPath = `./public/avatars/${today}`
+    // 返回绝对路径
+    await fs.mkdir(todayPath, { recursive: true })
+    let storage = multer.diskStorage({
+        destination(req, file, cb) {
+            cb(null, todayPath);
+        },
+        filename(req, file, cb) {
+            cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
+        }
+    })
+    return storage;
+}
+
+
 module.exports = async (req, res, next) => {
+    const storage = await generateStorage();
     let upload = multer({ storage }).single('avatar');
     upload(req, res, (err) => {
-        console.log(req.file);
         if (err) {
             res.status(500).json({ error: err })
         } else {

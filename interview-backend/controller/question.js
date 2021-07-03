@@ -3,6 +3,8 @@ const { Question } = require('../model')
 const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false);
 
+const fs = require('fs/promises')
+
 // 添加题目
 exports.addQuestion = async (req, res, next) => {
     try {
@@ -106,10 +108,44 @@ exports.updateQuestion = async (req, res, next) => {
                 new: true
             }
         )
-        console.log(question);
         res.status(201).json(question);
     } catch (err) {
         next(err)
     }
 }
 
+exports.backup = async (req, res, next) => {
+    try {
+        const questions = await Question.find({});
+        await fs.writeFile('./data/questions.json', JSON.stringify(questions))
+
+        res.status(200).json(
+            {
+                msg: '下载数据到json文件成功'
+            }
+        );
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.restore = async (req, res, next) => {
+    try {
+        let data = await fs.readFile('./data/questions.json');
+        data = JSON.parse(data.toString());
+        if (data) {
+            data.forEach(async item => {
+                const question = new Question({ ...item });
+                await question.save();
+            })
+            res.status(200).json({
+                msg: "数据写入数据库成功"
+            })
+        }
+        res.end();
+
+    } catch (error) {
+        next(error)
+    }
+
+}

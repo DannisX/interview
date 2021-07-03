@@ -7,8 +7,8 @@ import { Message, Notification } from 'element-ui'
 
 
 const _axios = axios.create({
-    // baseURL: 'http://localhost:3000/api',
-    baseURL: 'http://192.168.3.232:3000/api',
+    baseURL: 'http://localhost:3000/api',
+    // baseURL: 'http://192.168.3.232:3000/api',
     timeout: 5000,
 });
 

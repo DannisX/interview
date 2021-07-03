@@ -1,7 +1,7 @@
 const validate = require('../middleware/validate')
 const { body } = require('express-validator')
 const { User } = require('../model')
-
+const md5 = require('md5')
 
 // 验证器 注册路由的验证器
 exports.register = validate(
@@ -41,7 +41,10 @@ exports.login = [
                     { name: name },
                     { email: name },
                 ]
+                const data = await User.find({})
+                console.log(data);
                 const user = await User.findOne(filter);
+                console.log(user);
                 // const user = await User.findOne({ name });
                 if (!user) {
                     return Promise.reject('用户名不存在')
@@ -53,7 +56,7 @@ exports.login = [
     validate(
         [
             body('user.password').custom(async (password, { req }) => {
-                if (password != req.user.password) {
+                if (md5(password) != req.user.password) {
                     return Promise.reject('密码错误')
                 }
             })
@@ -70,9 +73,7 @@ exports.update = validate(
 exports.passwordUpdate = validate(
     [
         body('password.passwordOld').custom(async (password, { req }) => {
-            console.log(req.user);
-            console.log(password);
-            if (password != req.user.password) {
+            if (md5(password) != req.user.password) {
                 return Promise.reject('旧密码输入错误')
             }
         })

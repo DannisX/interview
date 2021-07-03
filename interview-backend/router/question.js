@@ -23,5 +23,9 @@ router.get('/question/:questionId', questionValidator.getCurrentQuestion, questi
 // 更新题目
 router.put('/question/:questionId', auth, questionValidator.updateQuestion, questionCtrl.updateQuestion)
 
-// 
+// 数据备份,用于将题目数据存至json文件，数据备份
+router.get('/questions/backup', questionCtrl.backup)
+// 数据恢复，用于将保存在json文件中的题目数据转至数据库中
+router.get('/questions/restore', questionCtrl.restore)
+
 module.exports = router
