@@ -2,13 +2,11 @@ import Vue from 'vue'
 import axios from 'axios'
 import router from '../router'
 import { Message, Notification } from 'element-ui'
-
-// axios.defaults.baseURL = "http://localhost:3000/api"
+import CONFIG from '../config'
 
 
 const _axios = axios.create({
-    baseURL: 'http://localhost:3000/api',
-    // baseURL: 'http://192.168.3.232:3000/api',
+    baseURL: `${CONFIG.HOST}:${CONFIG.PORT}/api`,
     timeout: 5000,
 });
 

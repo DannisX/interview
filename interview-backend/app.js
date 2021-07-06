@@ -3,6 +3,7 @@ const morgan = require("morgan")
 const cors = require("cors")
 const fs = require("fs")
 const path = require("path")
+const { HOST, PORT } = require('./config/config.default')
 
 const errorHandler = require('./middleware/errorHandler');
 require('./model')
@@ -17,7 +18,7 @@ app.use(morgan("dev"))
 app.use(cors())
 app.use('/static', express.static('public'))
 // 端口设置
-const PORT = process.env.PORT || 3000
+const port = PORT || 3000
 
 // 路由使用
 app.use('/api', router);
@@ -32,5 +33,5 @@ app.use(errorHandler());
 
 
 app.listen(PORT, () => {
-    console.log(`\nServer is now running at  http://localhost:${PORT}/\n`);
+    console.log(`\nServer is now running at  ${HOST}:${port}/\n`);
 })

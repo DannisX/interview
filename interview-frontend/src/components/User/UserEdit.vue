@@ -102,6 +102,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import CONFIG from "../../config";
 export default {
   name: "UserShow",
   data() {
@@ -138,8 +139,7 @@ export default {
         password: [{ validator: validatePassword, trigger: "blur" }],
         confirmNew: [{ validator: validateConfirmNew, trigger: "blur" }],
       },
-      action: "http://localhost:3000/api/user/avatarupload",
-      // action: "http://192.168.3.232:3000/api/user/avatarupload",
+      action: `${CONFIG.HOST}:${CONFIG.PORT}/api/user/avatarupload`,
       myheaders: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
